@@ -5,28 +5,25 @@
 #include <stdbool.h>
 
 #include "CustomSymbols.h"
+#include "DisplayDriver.h"
 
 #define SYMBOL_NOT_IN_USE 0xFF
 
 
-/* This is the callback function to create a new custom character in the CGRAM
- *  of the display.
- */
-static cc_createCustomCharFunction CreateCustomCharFunction = NULL;
 static const uint8_t *SymbolData = NULL;
 
 /* recentSymbolQueue[0..QueueSize-1] contains every active symbolId exactly
  *  once, in the order most to least recently used.
  */
-static uint8_t recentSymbolQueue[CC_NUM_CGRAM_SLOTS];
-static uint8_t QueueSize = CC_NUM_CGRAM_SLOTS;
+static uint8_t recentSymbolQueue[DD_NUM_CGRAM_SLOTS];
+static uint8_t QueueSize = DD_NUM_CGRAM_SLOTS;
 
 /* A symbolId identifies a logical custom symbol.
  * A symbolCode is the LCD character code currently assigned to that symbol.
  * Only QueueSize symbols can have an assigned symbolCode at a time.
  * All symbolCodes that are not in use are set to SYMBOL_NOT_IN_USE.
  */
-static uint8_t symbolCodes[CC_MAX_NUM_SYMBOLS];
+static uint8_t symbolCodes[CS_MAX_NUM_SYMBOLS];
 static uint8_t NumSymbols = 0;
 
 
@@ -62,7 +59,7 @@ static void setSymbolToMostRecent(const uint8_t symbolId) {
 
 static void createSymbolInDisplay(const uint8_t symbolId,
                                   const uint8_t symbolCode) {
-    CreateCustomCharFunction(symbolCode, SymbolData + 8 * symbolId);
+    DD_displayCreateCustomChar(symbolCode, SymbolData + 8 * symbolId);
 }
 
 
@@ -88,10 +85,10 @@ static inline bool isSymbolInUse(const uint8_t symbolId) {
 
 
 // symbol is the 0x80+ ascii character and symbolId is its index in symbolCodes[]
-uint8_t cc_getSymbolCode(const uint8_t symbol) {
-    assert (symbol >= CC_FIRST_SYMBOL);
-    assert (symbol < CC_FIRST_SYMBOL + NumSymbols);
-    const uint8_t symbolId = symbol - CC_FIRST_SYMBOL;
+uint8_t cs_getSymbolCode(const uint8_t symbol) {
+    assert (symbol >= CS_FIRST_SYMBOL);
+    assert (symbol < CS_FIRST_SYMBOL + NumSymbols);
+    const uint8_t symbolId = symbol - CS_FIRST_SYMBOL;
     if (isSymbolInUse(symbolId)) {
         setSymbolToMostRecent(symbolId);
     } else {
@@ -115,24 +112,21 @@ static void primesymbolCodes(void) {
 }
 
 
-void cc_initSymbols(const uint8_t numSymbols,
-                    const uint8_t *symbolData,
-                    cc_createCustomCharFunction createCustomChar) {
+void cs_initSymbols(const uint8_t numSymbols,
+                    const uint8_t *symbolData) {
     assert(NumSymbols == 0); // init must only be called once
     assert(numSymbols > 0);
-    assert(numSymbols <= CC_MAX_NUM_SYMBOLS);
+    assert(numSymbols <= CS_MAX_NUM_SYMBOLS);
     assert(symbolData != NULL);
-    assert(createCustomChar != NULL);
-    CreateCustomCharFunction = createCustomChar;
     SymbolData = symbolData;
     NumSymbols = numSymbols;
-    if (NumSymbols < CC_NUM_CGRAM_SLOTS) {
+    if (NumSymbols < DD_NUM_CGRAM_SLOTS) {
         QueueSize = NumSymbols;
     }
     primesymbolCodes();
 }
 
 
-void cc_clearSymbols(void) {
+void cs_clearSymbols(void) {
     NumSymbols = 0;
 }

@@ -17,6 +17,10 @@ uint8_t getCursorRow();
 
 uint8_t getCursorColumn();
 
+uint8_t getLastCreatedSymbolCode(void);
+const uint8_t *getLastCreatedSymbolData(void);
+uint8_t getCreateCustomCharCallCount(void);
+
 void dumpDisplay();
 
 #endif

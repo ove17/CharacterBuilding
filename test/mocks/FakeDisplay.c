@@ -2,7 +2,6 @@
  *
  * Implements all functions from DisplayDriver.h + the inspection functions from
  *  FakeDisplay.h
- *
  */
 
 
@@ -24,9 +23,15 @@ typedef struct {
 static char FakeDisplay[DD_NUM_ROWS * DD_NUM_COLUMNS];
 static cursor_t Cursor;
 
+static uint8_t LastCreatedSymbolCode = 0;
+static const uint8_t *LastCreatedSymbolData = NULL;
+static uint8_t CreateCustomCharCallCount = 0;
+
 
 void DD_displayInit(void) {
     Cursor = (cursor_t){.row = 0xFF, .col = 0xFF};
+    LastCreatedSymbolCode = 0;
+    CreateCustomCharCallCount = 0;
 }
 
 
@@ -63,9 +68,11 @@ void DD_displayChar(const char charAscii) {
 }
 
 
-
 void DD_displayCreateCustomChar(const uint8_t cgramSlot,
                                 const uint8_t charData[]) {
+    LastCreatedSymbolCode = cgramSlot;
+    LastCreatedSymbolData = charData;
+    CreateCustomCharCallCount++;
 }
 
 
@@ -92,6 +99,21 @@ uint8_t getCursorRow() {
 
 uint8_t getCursorColumn() {
     return Cursor.col;
+}
+
+
+uint8_t getLastCreatedSymbolCode(void) {
+    return LastCreatedSymbolCode;
+}
+
+
+const uint8_t *getLastCreatedSymbolData(void) {
+    return LastCreatedSymbolData;
+}
+
+
+uint8_t getCreateCustomCharCallCount(void) {
+    return CreateCustomCharCallCount;
 }
 
 

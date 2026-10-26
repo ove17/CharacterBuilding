@@ -19,7 +19,7 @@ TEST_GROUP(DisplayInit) {
     void setup() {}
 
     void teardown() {
-        cc_clearSymbols();
+        cs_clearSymbols();
     }
 };
 
@@ -42,6 +42,14 @@ TEST(DisplayInit,
 }
 
 
+TEST(DisplayInit,
+     writeCharWorks_afterSettingNumSymbolsTo0) {
+    CB_initDisplay(0, NULL);
+    CB_writeChar('*');
+    CHECK_EQUAL('*', getFakeDisplayChar(0, 0));
+}
+
+
 ///////
 
 
@@ -51,7 +59,7 @@ TEST_GROUP(Display) {
     }
 
     void teardown() {
-        cc_clearSymbols();
+        cs_clearSymbols();
     }
 };
 

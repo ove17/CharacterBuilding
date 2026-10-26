@@ -3,7 +3,7 @@
 #include "CustomSymbols.h"
 
 enum {
-        TEST_SYMBOL_0 = CC_FIRST_SYMBOL,
+        TEST_SYMBOL_0 = CS_FIRST_SYMBOL,
         TEST_SYMBOL_1,
         TEST_SYMBOL_2,
         TEST_SYMBOL_3,
@@ -16,7 +16,7 @@ enum {
         TEST_SYMBOL_10,
         TEST_SYMBOL_11,
         AFTER_LAST_SYMBOL,
-        NUM_SYMBOLS = AFTER_LAST_SYMBOL - CC_FIRST_SYMBOL
+        NUM_SYMBOLS = AFTER_LAST_SYMBOL - CS_FIRST_SYMBOL
 };
 
 
